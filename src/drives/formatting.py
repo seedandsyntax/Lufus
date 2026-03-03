@@ -2,10 +2,7 @@ import subprocess
 from . import states
 from . import find_usb as fu
 
-mount_dict = fu.find_usb()  # GETS THE FIRST KEY FOR NOW
-mount = next(iter(mount_dict))  # IMPORT THE INITIAL MOUNT POINT
 newlabel = states.new_label   # IMPORT THE CUSTOM LABEL GIVEN BY USER
-drive = fu.find_DN() # IMPORTS DRIVE NODE
 
 def pkexecNotFound():
     print("Error: The command pkexec or labeling software was not found on your system.")
@@ -20,6 +17,9 @@ def unexpected():
     # 3 -> ext4
 ### DISK FORMATTING ###
 def volumecustomlabel():
+    mount_dict = fu.find_usb()  # GETS THE FIRST KEY FOR NOW
+    mount = next(iter(mount_dict))  # IMPORT THE INITIAL MOUNT POINT
+    drive = fu.find_DN() # IMPORTS DRIVE NODE
     # THIS FUNCTION MUST BE USED AFTER(?) THE DISK IS FORMATTED
     # 1. detect the file type
     type = states.currentFS
@@ -82,6 +82,9 @@ def volumecustomlabel():
         unexpected()    
 
 def cluster():
+    mount_dict = fu.find_usb()  # GETS THE FIRST KEY FOR NOW
+    mount = next(iter(mount_dict))  # IMPORT THE INITIAL MOUNT POINT
+    drive = fu.find_DN() # IMPORTS DRIVE NODE
     # for logical blcok size
     try:
         cluster1 = subprocess.run(["pkexec", "blockdev", "--getbsz", drive], capture_output=True, text=True, check=True)
@@ -120,6 +123,9 @@ def checkdevicebadblock():
     pass
 
 def dskformat():
+    mount_dict = fu.find_usb()  # GETS THE FIRST KEY FOR NOW
+    mount = next(iter(mount_dict))  # IMPORT THE INITIAL MOUNT POINT
+    drive = fu.find_DN() # IMPORTS DRIVE NODE
     type = states.currentFS
     #These can later be turned to a notification or error box using pyqt
     #THIS WILL ASK FOR PASSWORD NEED TO FETCH PASSWORD so we are using pkexec from polkit to prompt the user for a password. need to figure out a way to use another method or implement this everywhere.
