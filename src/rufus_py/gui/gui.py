@@ -475,12 +475,12 @@ class Rufus(QMainWindow):
         if states.image_option == "Standard Linux":
             self.combo_fs.clear()
             self.combo_fs.addItem("UDF")
-            print("UDF Only")
+            # print("UDF Only")
         else:
             self.combo_fs.clear()
             self.combo_fs.addItems(self.all_fs_options)
             self.combo_fs.setCurrentText("NTFS")
-            print("Every")
+            # print("windows options")
         self.combo_fs.blockSignals(False)
         self.updateFS()
 
