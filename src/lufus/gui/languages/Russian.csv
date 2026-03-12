@@ -1,0 +1,89 @@
+key,value
+window_title,lufus
+log_window_title,lufus Логи
+about_window_title,О программе
+settings_window_title,Настройки
+btn_copy_log,Скопировать логи в буфер обмена
+btn_save_log,Сохранить логи…
+dlg_save_log_title,Сохранить логи
+save_failed_title,Не удалось сохранить
+save_failed_body,Не удалось сохранить логи:
+settings_label_language,Язык
+settings_no_languages,Языки не найдены
+header_drive_properties,Свойства диска
+header_format_options,Свойства форматирования
+header_status,Статус
+lbl_device,Устройство
+lbl_boot_selection,Загрузочный сектор
+lbl_image_option,Свойства образа
+lbl_partition_scheme,Схема разбиения на разделы
+lbl_target_system,Целевая система
+lbl_volume_label,Название тома
+lbl_file_system,Файловая система
+lbl_flash_option,Опции записи
+lbl_cluster_size,Размер кластера
+combo_image_windows,Стандартная установка Windows
+combo_image_linux, Стандартная Linux
+combo_image_format,Режим “Только форматирование”
+combo_partition_gpt,GPT
+combo_partition_mbr,MBR
+combo_target_uefi,UEFI (без CSM)
+combo_target_bios,BIOS (или UEFI-CSM)
+combo_cluster_4096,4096 байта (по умолчанию)
+combo_cluster_8192,8192 байта
+combo_badblocks_1pass,1 пропуск
+combo_flash_iso,Iso Режим
+combo_flash_woe,Woe USB
+combo_flash_ventoy,Ventoy
+combo_flash_dd,DD
+combo_flash_none,Нет
+chk_quick_format,Быстрое форматирование
+chk_extended_label,Создание расширенных файлов меток и значков
+chk_bad_blocks,Проверка устройства на плохие блоки
+btn_select,ВЫБРАТЬ
+btn_start,НАЧАТЬ
+btn_cancel,ОТМЕНИТЬ
+tooltip_refresh,Обновить список устройств (Ctrl+R)
+tooltip_download,Скачать обновление
+tooltip_about,О программе
+tooltip_settings,Настройки
+tooltip_log,Логи
+status_ready,Готово
+status_scanning,Проверка на наличие USB устройств…
+status_scan_failed,Сканирование провалено
+status_flashing,Запись…
+progress_preparing,Подготовка…
+progress_complete,Успешно! 100%
+progress_failed,Провалено
+progress_starting,Начало.. 10%
+progress_unmounted,Размонтировка устройства.. 20%
+progress_formatted,Форматирование устройства.. 60%
+progress_label_changed,Изменение лейбла.. 80%
+progress_mount_done,Монтирование завершенно.. Завершенно! 100%
+msgbox_cancel_title,ОТМЕНИТЬ
+msgbox_cancel_body,Вы уверены что хотите отменить процесс?
+msgbox_success_title,Успешно
+msgbox_success_body,Успешно записаны данные на USB устройство!
+msgbox_error_title,Ошибка
+msgbox_error_body,Не удалось записать данные на USB устройство.
+msgbox_no_image_title,Без образа
+msgbox_no_image_body,Пожалуйста выберите сначала правильный установочный носитель.
+msgbox_no_device_title,Нет устройств
+msgbox_no_device_body,Пожалуйста выберите сначала USB устройство
+msgbox_usb_found_title,Обнаружено новое USB устройство
+msgbox_usb_found_body,USB устройство найденно
+msgbox_no_devices_title,Нет устройств
+msgbox_no_devices_body,"USB устройства не были обнаружены.
+
+Пожалуйста подключите устройство."
+msgbox_scan_error_title,Ошибка сканирования
+msgbox_scan_error_body,Ошибка в ходе сканирования USB устройств:
+no_usb_found,USB устройства не обнаружены.
+dlg_select_image_title,Выберите образ для записи
+dlg_select_image_filter,ISO Образы (*.iso);;Все файлы (*)
+about_content,"Lufus - это программа для записи образов дисков, написанная на языке Python для Linux.
+
+Вдохновлено оригинальным инструментом Rufus для Windows.
+
+Версия: 1.0.0
+GitHub: github.com/hog185/lufus"
