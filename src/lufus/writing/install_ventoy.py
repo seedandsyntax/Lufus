@@ -3,10 +3,10 @@ import subprocess
 import sys
 import os
 import shutil
-import tempfile  # [ANNOTATION] Import tempfile to replace hardcoded /tmp paths with unique per-run temp directories.
+import tempfile
 import time
 import urllib.request
-import urllib.error  # [ANNOTATION] Import urllib.error for explicit timeout/error handling in download_wimboot.
+import urllib.error
 import glob
 
 """
@@ -15,10 +15,10 @@ import glob
 """
 
 WIMBOOT_URL = "https://github.com/ipxe/wimboot/releases/latest/download/wimboot"
-WIMBOOT_TIMEOUT = 60  # [ANNOTATION] Define a named timeout constant so download_wimboot never hangs indefinitely.
+WIMBOOT_TIMEOUT = 60
 
 
-def download_wimboot(dest_path: str) -> bool:  # [ANNOTATION] Add return type hint.
+def download_wimboot(dest_path: str) -> bool:
     """
     Downloads wimboot, a bootloader necessary to boot into windows
 
@@ -32,12 +32,12 @@ def download_wimboot(dest_path: str) -> bool:  # [ANNOTATION] Add return type hi
     print("--- Downloading wimboot ---")
     try:
         # urlretrieve has no timeout; use urlopen+read so we can set one.
-        req = urllib.request.urlopen(WIMBOOT_URL, timeout=WIMBOOT_TIMEOUT)  # [ANNOTATION] Use urlopen with timeout instead of urlretrieve to prevent indefinite hang on slow/stalled network.
-        with open(dest_path, "wb") as fh:  # [ANNOTATION] Write downloaded bytes explicitly so the file is always closed before returning.
+        req = urllib.request.urlopen(WIMBOOT_URL, timeout=WIMBOOT_TIMEOUT)
+        with open(dest_path, "wb") as fh:
             fh.write(req.read())
         print("wimboot downloaded successfully.")
         return True
-    except urllib.error.URLError as e:  # [ANNOTATION] Catch URLError (includes timeout) separately for a more informative message.
+    except urllib.error.URLError as e:
         print(f"WARNING: Could not download wimboot (network error): {e}")
         print("Windows ISO booting will not work.")
         return False
@@ -47,7 +47,7 @@ def download_wimboot(dest_path: str) -> bool:  # [ANNOTATION] Add return type hi
         return False
 
 
-def install_grub(target_device: str) -> bool:  # [ANNOTATION] Add type hint to public function signature.
+def install_grub(target_device: str) -> bool:
     """
     Prepares the USB drive with a hybrid GRUB bootloader for multi-ISO booting.
 
@@ -91,17 +91,17 @@ unit: sectors
     """
 
     # Use unique temp dirs instead of hardcoded /tmp paths to avoid stale-mount collisions.
-    efi_mount = tempfile.mkdtemp(prefix="lufus_efi_")  # [ANNOTATION] Replace hardcoded /tmp/efi_prepare with mkdtemp so concurrent or resumed runs never reuse a stale mount point.
-    data_mount = tempfile.mkdtemp(prefix="lufus_data_")  # [ANNOTATION] Replace hardcoded /tmp/data_prepare with mkdtemp for the same reason.
-    efi_mounted = False  # [ANNOTATION] Track mount state so the finally block only unmounts what was actually mounted.
-    data_mounted = False  # [ANNOTATION] Track mount state so the finally block only unmounts what was actually mounted.
+    efi_mount = tempfile.mkdtemp(prefix="lufus_efi_")
+    data_mount = tempfile.mkdtemp(prefix="lufus_data_")
+    efi_mounted = False
+    data_mounted = False
 
     try:
         print(f"--- Partitioning {target_device} ---")
         subprocess.run(['sfdisk', target_device], input=sfdisk_input.encode(), check=True)
 
         # Determine partition names (handles /dev/sdaX vs /dev/nvme0n1pX and /dev/mmcblkXpY)
-        sep = 'p' if 'nvme' in target_device or 'mmcblk' in target_device else ''  # [ANNOTATION] Add 'mmcblk' to separator check to match the safety guard above and be consistent with flash_windows.
+        sep = 'p' if 'nvme' in target_device or 'mmcblk' in target_device else ''
         efi_part = f"{target_device}{sep}2"
         data_part = f"{target_device}{sep}3"
 
@@ -127,7 +127,7 @@ unit: sectors
 
         # GRUB Installation
         subprocess.run(['mount', efi_part, efi_mount], check=True)
-        efi_mounted = True  # [ANNOTATION] Set flag after successful mount so finally block knows to unmount.
+        efi_mounted = True
 
         print("--- Installing GRUB (Legacy + UEFI) ---")
         subprocess.run(['grub-install', '--target=i386-pc', f'--boot-directory={efi_mount}/boot', target_device], check=True)
@@ -139,26 +139,26 @@ unit: sectors
         if not os.path.exists(cfg_path):
             print("ERROR: grub.cfg not found next to the script.")
             return False  # finally block will unmount because efi_mounted=True
-        shutil.copy(cfg_path, f"{efi_mount}/boot/grub/grub.cfg")  # [ANNOTATION] Use pre-computed cfg_path instead of rebuilding the join expression redundantly.
+        shutil.copy(cfg_path, f"{efi_mount}/boot/grub/grub.cfg")
 
         # Download wimboot
         subprocess.run(['mount', data_part, data_mount], check=True)
-        data_mounted = True  # [ANNOTATION] Set flag after successful mount so finally block knows to unmount.
+        data_mounted = True
         download_wimboot(f"{data_mount}/wimboot")
 
         print("\nSUCCESS: USB is ready. Copy .iso files to 'OS_PART'.")
         return True
 
-    except Exception as e:  # [ANNOTATION] Broaden catch from (CalledProcessError, FileNotFoundError) to Exception so PermissionError/OSError/TimeoutExpired also trigger cleanup.
+    except Exception as e:
         print(f"\nCommand failed: {e}")
         return False
     finally:
-        if efi_mounted:  # [ANNOTATION] Only unmount if mount actually succeeded, preventing spurious 'not mounted' errors in cleanup.
+        if efi_mounted:
             subprocess.run(['umount', efi_mount], check=False)
-        if data_mounted:  # [ANNOTATION] Only unmount if mount actually succeeded, preventing spurious 'not mounted' errors in cleanup.
+        if data_mounted:
             subprocess.run(['umount', data_mount], check=False)
         # Clean up temp dirs regardless of outcome
-        for d in (efi_mount, data_mount):  # [ANNOTATION] Remove temp dirs in finally so mkdtemp directories don't accumulate on repeated failures.
+        for d in (efi_mount, data_mount):
             try:
                 os.rmdir(d)
             except OSError:
