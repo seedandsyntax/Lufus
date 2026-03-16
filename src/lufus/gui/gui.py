@@ -55,8 +55,8 @@ def _find_resource_dir(name: str) -> Path | None:
 
 class Scale:
     BASE_DPI = 80.0
-    DESIGN_W = 650
-    DESIGN_H = 900
+    DESIGN_W = 750
+    DESIGN_H = 1050
     REF_W = 2560
     REF_H = 1440
 
@@ -338,7 +338,7 @@ class SettingsDialog(QDialog):
         self._S: Scale = parent._S if parent else None
         self.setWindowTitle(self._T.get("settings_window_title", "Settings"))
         if self._S:
-            self.setFixedSize(self._S.px(650), self._S.px(450))
+            self.setFixedSize(self._S.px(750), self._S.px(450))
         else:
             self.setFixedSize(650, 450)
         m = self._S.px(20) if self._S else 20
@@ -450,7 +450,6 @@ class FlashWorker(QThread):
         try:
             from lufus.drives import states, formatting as fo
             from lufus.writing.flash_usb import FlashUSB
-            from lufus.writing.flash_woeusb import flash_woeusb
             import glob
 
             options = self.options
@@ -473,10 +472,6 @@ class FlashWorker(QThread):
                     success = FlashUSB(iso_path, device_node,
                                        progress_cb=self.progress.emit,
                                        status_cb=self.status.emit)
-                elif flash_mode == 1:
-                    success = flash_woeusb(device_node, iso_path,
-                                           progress_cb=self.progress.emit,
-                                           status_cb=self.status.emit)
                 else:
                     success = False
             else:
@@ -508,11 +503,11 @@ class lufus(QMainWindow):
 
         screen = QApplication.primaryScreen().availableGeometry()
         scale = min(screen.width() / Scale.REF_W, screen.height() / Scale.REF_H)
-        win_w = min(int(Scale.DESIGN_W * scale), int(screen.width() * 0.9))
-        win_h = min(int(Scale.DESIGN_H * scale), int(screen.height() * 0.9))
+        win_w = min(int(Scale.DESIGN_W * scale), int(screen.width() * 1.2))
+        win_h = min(int(Scale.DESIGN_H * scale), int(screen.height() * 1.2))
         ui_factor = win_w / Scale.DESIGN_W
         self._S = Scale(QApplication.instance(), factor=ui_factor)
-        self.setFixedSize(win_w, win_h)
+        self.setFixedSize(win_w, win_h)#oink
 
         self.flash_worker = None
         self.verify_worker = None
@@ -722,27 +717,27 @@ class lufus(QMainWindow):
         main_layout.addLayout(image_layout)
         main_layout.addSpacing(GROUP_SPACING)
 
-        self.lbl_part = QLabel(self._T.get("lbl_partition_scheme", "Partition Scheme"))
-        self.combo_partition = QComboBox()
-        self.combo_partition.addItem(self._T.get("combo_partition_gpt", "GPT"))
-        self.combo_partition.addItem(self._T.get("combo_partition_mbr", "MBR"))
-        self.combo_partition.currentTextChanged.connect(self.update_partition_scheme)
+        #self.lbl_part = QLabel(self._T.get("lbl_partition_scheme", "Partition Scheme"))
+        #self.combo_partition = QComboBox()
+        #self.combo_partition.addItem(self._T.get("combo_partition_gpt", "GPT"))
+        #self.combo_partition.addItem(self._T.get("combo_partition_mbr", "MBR"))
+        #self.combo_partition.currentTextChanged.connect(self.update_partition_scheme)
 
-        self.lbl_target = QLabel(self._T.get("lbl_target_system", "Target System"))
-        self.combo_target = QComboBox()
-        self.combo_target.addItem(self._T.get("combo_target_uefi", "UEFI"))
-        self.combo_target.addItem(self._T.get("combo_target_bios", "BIOS"))
-        self.combo_target.currentTextChanged.connect(self.update_target_system)
+        #self.lbl_target = QLabel(self._T.get("lbl_target_system", "Target System"))
+        #self.combo_target = QComboBox()
+        #self.combo_target.addItem(self._T.get("combo_target_uefi", "UEFI"))
+        #self.combo_target.addItem(self._T.get("combo_target_bios", "BIOS"))
+        #self.combo_target.currentTextChanged.connect(self.update_target_system)
 
         grid_part = QGridLayout()
         grid_part.setHorizontalSpacing(S.px(10))
         grid_part.setVerticalSpacing(FIELD_SPACING)
         grid_part.setColumnStretch(0, 1)
         grid_part.setColumnStretch(1, 1)
-        grid_part.addWidget(self.lbl_part, 0, 0)
-        grid_part.addWidget(self.combo_partition, 1, 0)
-        grid_part.addWidget(self.lbl_target, 0, 1)
-        grid_part.addWidget(self.combo_target, 1, 1)
+        #grid_part.addWidget(self.lbl_part, 0, 0)
+        #grid_part.addWidget(self.combo_partition, 1, 0)
+        #grid_part.addWidget(self.lbl_target, 0, 1)
+        #grid_part.addWidget(self.combo_target, 1, 1)
         main_layout.addLayout(grid_part)
 
         main_layout.addSpacing(S.px(6))
@@ -1017,13 +1012,13 @@ class lufus(QMainWindow):
         self.combo_flash.blockSignals(False)
         self.updateflash()
 
-    def update_partition_scheme(self):
-        states.partition_scheme = self.combo_partition.currentIndex()
-        self.log_message(f"Partition scheme changed to: {self.combo_partition.currentText()} (index={states.partition_scheme})")
+    #def update_partition_scheme(self):
+    #    states.partition_scheme = self.combo_partition.currentIndex()
+    #    self.log_message(f"Partition scheme changed to: {self.combo_partition.currentText()} (index={states.partition_scheme})")
 
-    def update_target_system(self):
-        states.target_system = self.combo_target.currentIndex()
-        self.log_message(f"Target system changed to: {self.combo_target.currentText()} (index={states.target_system})")
+    #def update_target_system(self):
+    #    states.target_system = self.combo_target.currentIndex()
+    #    self.log_message(f"Target system changed to: {self.combo_target.currentText()} (index={states.target_system})")
 
     def update_new_label(self, current_text):
         states.new_label = current_text
@@ -1196,8 +1191,8 @@ class lufus(QMainWindow):
         self.lbl_boot.setText(self._T.get("lbl_boot_selection", "Boot Selection"))
         self.btn_select.setText(self._T.get("btn_select", "Select"))
         self.lbl_image.setText(self._T.get("lbl_image_option", "Image Option"))
-        self.lbl_part.setText(self._T.get("lbl_partition_scheme", "Partition Scheme"))
-        self.lbl_target.setText(self._T.get("lbl_target_system", "Target System"))
+        #self.lbl_part.setText(self._T.get("lbl_partition_scheme", "Partition Scheme"))
+        #self.lbl_target.setText(self._T.get("lbl_target_system", "Target System"))
         self.lbl_vol.setText(self._T.get("lbl_volume_label", "Volume Label"))
         self.lbl_fs.setText(self._T.get("lbl_file_system", "File System"))
         self.lbl_flash.setText(self._T.get("lbl_flash_option", "Flash Option"))
@@ -1360,8 +1355,8 @@ class lufus(QMainWindow):
             "image_option": states.image_option,
             "currentflash": states.currentflash,
             "currentFS": states.currentFS,
-            "partition_scheme": states.partition_scheme,
-            "target_system": states.target_system,
+            #"partition_scheme": states.partition_scheme,
+            #"target_system": states.target_system,
             "cluster_size": states.cluster_size,
             "QF": states.QF,
             "create_extended": states.create_extended,
@@ -1371,46 +1366,56 @@ class lufus(QMainWindow):
             "expected_hash": states.expected_hash,
         }
 
-        self.log_message(f"Starting flash thread: image_option={options['image_option']}, flash_mode={options['currentflash']}, device={options['device']}")
+        if os.geteuid() != 0:
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as tmp:
+                json.dump(options, tmp)
+                opts_path = tmp.name
 
-        self.flash_worker = FlashWorker(options)
-        self.flash_worker.progress.connect(self.progress_bar.setValue, Qt.ConnectionType.QueuedConnection)
-        self.flash_worker.status.connect(self._on_flash_status, Qt.ConnectionType.QueuedConnection)
-        self.flash_worker.flash_done.connect(self.on_flash_finished, Qt.ConnectionType.QueuedConnection)
-        self.flash_worker.start()
+            # Preserve display/session variables so the root GUI can render
+            gui_env = {
+                "DISPLAY":          os.environ.get("DISPLAY"),
+                "XAUTHORITY":       os.environ.get("XAUTHORITY") or os.path.expanduser("~/.Xauthority"),
+                "WAYLAND_DISPLAY":  os.environ.get("WAYLAND_DISPLAY"),
+                "XDG_RUNTIME_DIR":  os.environ.get("XDG_RUNTIME_DIR"),
+                "PATH":             os.environ.get("PATH", "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"),
+                "PYTHONPATH":       os.environ.get("PYTHONPATH", ""),
+            }
+            env_args = ["env"]
+            for key, value in gui_env.items():
+                if value:
+                    env_args.append(f"{key}={value}")
 
-        # Preserve display/session variables so the root GUI can render
-        gui_env = {
-            "DISPLAY":          os.environ.get("DISPLAY"),
-            "XAUTHORITY":       os.environ.get("XAUTHORITY") or os.path.expanduser("~/.Xauthority"),
-            "WAYLAND_DISPLAY":  os.environ.get("WAYLAND_DISPLAY"),
-            "XDG_RUNTIME_DIR":  os.environ.get("XDG_RUNTIME_DIR"),
-            "PATH":             os.environ.get("PATH"),
-            "PYTHONPATH":       os.environ.get("PYTHONPATH", ""),
-        }
-        env_args = ["env"]
-        for key, value in gui_env.items():
-            if value:
-                env_args.append(f"{key}={value}")
+            import shutil
+            pkexec_path = shutil.which("pkexec") or "/usr/bin/pkexec"
+            if not os.path.isfile(pkexec_path):
+                self.log_message("Error: pkexec not found. Please install policykit-1 or run as root.", level="ERROR")
+                return
 
-        appimage = os.environ.get("APPIMAGE")
-        executable = appimage if appimage else sys.executable
-        base_args = sys.argv[1:] if appimage else sys.argv[:]
-        # Strip any previous --flash-now args to avoid duplication on re-exec
-        clean_args = []
-        skip_next = False
-        for a in base_args:
-            if skip_next:
-                skip_next = False
-                continue
-            if a == "--flash-now":
-                skip_next = True
-                continue
-            clean_args.append(a)
+            appimage = os.environ.get("APPIMAGE")
+            executable = appimage if appimage else sys.executable
+            base_args = sys.argv[1:] if appimage else sys.argv[:]
+            # Strip any previous --flash-now args to avoid duplication on re-exec
+            clean_args = []
+            skip_next = False
+            for a in base_args:
+                if skip_next:
+                    skip_next = False
+                    continue
+                if a == "--flash-now":
+                    skip_next = True
+                    continue
+                clean_args.append(a)
 
-        cmd = ["pkexec"] + env_args + [executable] + clean_args + ["--flash-now", opts_path]
-        self.log_message("Relaunching as root via pkexec for flash operation...")
-        os.execvp("pkexec", cmd)
+            cmd = [pkexec_path] + env_args + [executable] + clean_args + ["--flash-now", opts_path]
+            self.log_message("Relaunching as root via pkexec for flash operation...")
+            os.execvp(pkexec_path, cmd)
+        else:
+            self.log_message(f"Starting flash thread: image_option={options['image_option']}, flash_mode={options['currentflash']}, device={options['device']}")
+            self.flash_worker = FlashWorker(options)
+            self.flash_worker.progress.connect(self.progress_bar.setValue, Qt.ConnectionType.QueuedConnection)
+            self.flash_worker.status.connect(self._on_flash_status, Qt.ConnectionType.QueuedConnection)
+            self.flash_worker.flash_done.connect(self.on_flash_finished, Qt.ConnectionType.QueuedConnection)
+            self.flash_worker.start()
 
     def _do_autoflash(self) -> None:
         """Called after init when this instance was launched with --flash-now."""
