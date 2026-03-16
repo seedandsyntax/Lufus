@@ -46,7 +46,15 @@ from PyQt6.QtGui import QFont, QFontDatabase
 from lufus.drives import states
 from lufus.drives.autodetect_usb import UsbMonitor
 
-THEME_DIR = Path(__file__).parent / 'themes'
+# HELPER METHOD DO NOT TOUCH ELSE SEEDY WILL BE MEGA MAD >:|
+def resource_path(relative_path: Path) -> Path:
+    try:
+        base_path = Path(sys._MEIPASS)
+    except AttributeError:
+        base_path = Path(__file__).parent
+    return base_path/relative_path
+
+THEME_DIR = resource_path('themes')
 
 
 def _find_resource_dir(name: str) -> Path | None:
@@ -550,9 +558,8 @@ class lufus(QMainWindow):
         S = self._S
         APP_NAME = "Lufus"
 
-        theme_dir = Path(__file__).parent / 'themes'
-        default_theme_path = theme_dir / 'default_theme.json'
-        template_path = theme_dir / 'style_template.qss'
+        default_theme_path = THEME_DIR / 'default_theme.json'
+        template_path = THEME_DIR / 'style_template.qss'
 
         user_config_dir_path = Path(user_config_dir(APP_NAME, roaming=True))
         user_theme_path = user_config_path = user_config_dir_path / 'user_theme.json'
