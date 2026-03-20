@@ -57,6 +57,7 @@ system_runtime_requires = [
     "ntfs-3g",
     "exfatprogs",
     "e2fsprogs",
+    "udftools",
 ]
 [tool.briefcase.app.lufus.linux.system.rhel]
 system_requires = [
@@ -68,6 +69,7 @@ system_runtime_requires = [
     "ntfs-3g",
     "exfatprogs",
     "e2fsprogs",
+    "udftools",
 ]
 [tool.briefcase.app.lufus.linux.system.suse]
 system_requires = [
@@ -80,6 +82,7 @@ system_runtime_requires = [
     "ntfs-3g",
     "exfatprogs",
     "e2fsprogs",
+    "udftools",
 ]
 [tool.briefcase.app.lufus.linux.system.arch]
 system_requires = [
@@ -91,6 +94,7 @@ system_runtime_requires = [
     "ntfs-3g",
     "exfatprogs",
     "e2fsprogs",
+    "udftools",
 ]
 [tool.briefcase.app.lufus.linux.appimage]
 manylinux = "manylinux_2_28"

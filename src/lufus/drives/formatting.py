@@ -137,13 +137,14 @@ def volumecustomlabel(target_partition: str = None):
     safe_drive = shlex.quote(drive)
     safe_label = shlex.quote(newlabel)
 
-    # 0 -> NTFS, 1 -> FAT32, 2 -> exFAT, 3 -> ext4
+    # 0 -> NTFS, 1 -> FAT32, 2 -> exFAT, 3 -> ext4, 4 -> UDF
     fs_type = getattr(states, 'currentFS', 0)
     cmd_map = {
         0: [_find_tool("ntfslabel"), drive, newlabel],
         1: [_find_tool("fatlabel"), drive, newlabel],
         2: [_find_tool("fatlabel"), drive, newlabel],
         3: [_find_tool("e2label"), drive, newlabel],
+        4: [_find_tool("udflabel"), drive, newlabel],
     }
     cmd = cmd_map.get(fs_type)
     if cmd is None:
@@ -375,6 +376,23 @@ def dskformat(status_cb=None) -> bool:
             return False
         except Exception as e:
             _status(f"ERROR (ext4): {type(e).__name__}: {e}")
+            return False
+
+    elif fs_type == 4:  # UDF
+        try:
+            tool = _find_tool("mkudffs")
+            cmd = [tool, "--blocksize=" + str(cluster2), raw_device]
+            _status(f"Running: {' '.join(cmd)}")
+            subprocess.run(cmd, check=True)
+            _status(f"Successfully formatted {raw_device} as UDF.")
+        except FileNotFoundError:
+            _status(f"ERROR: mkudffs not found. Install udftools.")
+            return False
+        except subprocess.CalledProcessError as e:
+            _status(f"ERROR: mkudffs failed (exit {e.returncode}). Is the drive unmounted?")
+            return False
+        except Exception as e:
+            _status(f"ERROR (UDF): {type(e).__name__}: {e}")
             return False
 
     else:
