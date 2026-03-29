@@ -1815,7 +1815,7 @@ class lufus(QMainWindow):
                     self.log_message(f"Running latest release build: {data['tag_name']} <= {current_version}", level="INFO")
                     return
             else:
-                self.log_message(f"Couldn't get latest release, responese: {response.status_code}", level="WARNING")
+                self.log_message(f"Couldn't get latest release, response: {response.status_code}", level="WARNING")
                 return
         except Exception as e:
             self.log_message(f"Update check failed: {e}", level="ERROR")
