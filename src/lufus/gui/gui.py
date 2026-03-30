@@ -502,10 +502,14 @@ class FlashWorker(QThread):
                     success = False
             else:
                 # other flash modes (Linux, Other)
+                scheme = PartitionScheme.LINUX
+                if states.currentFS == 1:  # FAT32
+                    scheme = PartitionScheme.SIMPLE_FAT32
+                
                 success = FlashUSB(iso_path, device_node,
-                                   PartitionScheme.LINUX,
-                                   progress_cb=self.progress.emit,
-                                   status_cb=self.status.emit)
+                                scheme,
+                                progress_cb=self.progress.emit,
+                                status_cb=self.status.emit)
 
             self.flash_done.emit(bool(success))
         except Exception as e:
@@ -1194,7 +1198,7 @@ class lufus(QMainWindow):
         # change available filesystems based on image type :3
         self.combo_fs.blockSignals(True)
         if states.image_option == 1:      # linux
-            self.combo_fs.clear(); self.combo_fs.addItems(["ext4", "UDF"]); self.combo_fs.setCurrentText("ext4")
+            self.combo_fs.clear(); self.combo_fs.addItems(["ext4", "UDF", "FAT32"]); self.combo_fs.setCurrentText("ext4")
         elif states.image_option == 0:    # windows
             self.combo_fs.clear()
             #self.combo_fs.addItems(["NTFS", "FAT32", "exFAT"]); self.combo_fs.setCurrentText("NTFS")
