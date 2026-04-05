@@ -835,8 +835,6 @@ class lufus(QMainWindow):
         # boot selection with file browser :D
         self.lbl_boot = QLabel(self._T.get("lbl_boot_selection", "Boot Selection"))
         self.combo_boot = QComboBox()
-        self.combo_boot.setEditable(True)
-        self.combo_boot.lineEdit().setReadOnly(True)
         self.combo_boot.addItem(self._T.get("combo_boot_default", "installation_media.iso"))
 
         self.btn_select = QPushButton(self._T.get("btn_select", "Select"))
