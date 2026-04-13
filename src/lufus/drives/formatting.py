@@ -53,7 +53,7 @@ def _get_raw_device(drive: str) -> str:
 
 
 def _get_mount_and_drive():
-# gets the mount location and drive info
+    # gets the mount location and drive info
     drive = states.DN
     mount_dict = fu.find_usb()
     mount = next(iter(mount_dict)) if mount_dict else None
@@ -102,8 +102,9 @@ def unmount(drive: str = None):
     subprocess.run(["udevadm", "settle"])
     time.sleep(0.5)
 
+
 #mountain
-def remount(drive: str=None):
+def remount(drive: str = None):
     if not drive:
         mount, drive, _ = _get_mount_and_drive()
     if not drive:
@@ -174,7 +175,7 @@ def volumecustomlabel(target_partition: str = None):
 
 
 def cluster():
-#cluster bs, go
+    #cluster bs, go
     _, drive, mount_dict = _get_mount_and_drive()
 
     if not mount_dict and not drive:
@@ -474,6 +475,8 @@ def drive_repair():
 1. Hardware Requirements Bypass
 2. Making Local Accounts
 3. Disabling privacy questions'''
+
+
 # bypass hardware requirements
 def winhardwarebypass():
     mount, _, _ = _get_mount_and_drive()
@@ -502,6 +505,7 @@ def winhardwarebypass():
     except subprocess.CalledProcessError as e:
         log.error("winhardwarebypass: CalledProcessError: %s", e.stderr)
 
+
 # ability to make local accounts
 def winlocalacc():
     mount, _, _ = _get_mount_and_drive()
@@ -526,6 +530,7 @@ def winlocalacc():
     except subprocess.CalledProcessError as e:
         log.error("winlocalacc: CalledProcessError: %s", e.stderr)
 
+
 #skip privacy questions in windows
 def winskipprivacyques():
     mount, _, _ = _get_mount_and_drive()
@@ -547,6 +552,7 @@ def winskipprivacyques():
     with open(xml_path, "w") as f:
         f.write(xml_content)
     log.info("winskipprivacyques: autounattend.xml created to skip privacy screens.")
+
 
 #creating custom name local account (!) this also includes skip microsoft account (!)
 def winlocalaccname():
@@ -585,4 +591,3 @@ def winlocalaccname():
         "winlocalaccname: autounattend.xml created — privacy screens skipped, local account %r created.",
         user_name,
     )
-
