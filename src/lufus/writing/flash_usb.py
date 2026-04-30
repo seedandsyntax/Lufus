@@ -24,7 +24,13 @@ log = get_logger(__name__)
 
 
 
-def flash_usb(device: str, iso_path: str, scheme: PartitionScheme = PartitionScheme.SIMPLE_FAT32, progress_cb=None, status_cb=None) -> bool:
+def flash_usb(
+        device: str,
+        iso_path: str,
+        scheme: PartitionScheme = PartitionScheme.SIMPLE_FAT32,
+        progress_cb=None,
+        status_cb=None
+) -> bool:
     def _status(msg: str) -> None:
         log.info(msg)
         if status_cb:

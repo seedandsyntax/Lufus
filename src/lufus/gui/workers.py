@@ -115,7 +115,8 @@ class FlashWorker(QThread):
                     #else:
                     #  scheme=PartitionScheme.LINUX
                     scheme=PartitionScheme.SIMPLE_FAT32
-                    success = FlashUSB(iso_path, device_node,
+                    success = FlashUSB(device_node,
+                                       iso_path,
                                        scheme,
                                        progress_cb=self.progress.emit,
                                        status_cb=self.status.emit)
